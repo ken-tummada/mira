@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Mirror</title>
+  <link rel="stylesheet" href="/style.css"/>
+</head>
+<body>
+  <div id="container">
+    <header id="top">
+      <div class="left">
+        <div id="clock">--:--</div>
+        <div id="date">--</div>
+      </div>
+      <div class="right">
+        <div id="weather">
+          <div class="temp">--°</div>
+          <div class="desc">Weather</div>
+          <div class="city">City</div>
+          <div id="forecast" class="forecast"></div>
+        </div>
+      </div>
+    </header>
+
+    <main id="middle">
+      <section id="calendar">
+        <h2>Calendar</h2>
+        <ul id="events"></ul>
+      </section>
+
+      <section id="av">
+        <h2>Camera & Mic</h2>
+        <video id="cam" autoplay playsinline muted></video>
+        <div id="mic"><div class="bar" id="micBar"></div></div>
+        <div id="avHelp">If blank, allow camera in your browser permissions.</div>
+      </section>
+
+      <section id="notes">
+        <h2>Notes</h2>
+        <div id="notesList"></div>
+        <div id="notesControls">
+          <input id="noteInput" placeholder="Add a note and press Enter"/>
+        </div>
+      </section>
+    </main>
+
+    <footer id="bottom">
+      <div id="news"><marquee id="newsTicker">Smart Mirror ready.</marquee></div>
+    </footer>
+  </div>
+
+  <script src="/app.js"></script>
+  <!-- MediaPipe (CDN) + gestures -->
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+  <script src="/gestures.js"></script>
+</body>
+</html>
