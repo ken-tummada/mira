@@ -5,22 +5,30 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ==== Root and CSS variables for theme ==== */
+/* ==== Root and CSS variables for liquid glass theme ==== */
 :root {
-  /* Colours */
-  --color-bg: 255 255 255;           /* white background default */
-  --color-foreground: 22 24 35;      /* dark text */
-  --color-primary: 59 130 246;       /* Tailwind blue-500 */
-  --color-primary-hover: 37 99 235;   /* Tailwind blue-600 */
-  --color-surface: 249 250 251;      /* light surface background (gray-50) */
-  --color-muted: 100 116 139;        /* gray-500 text for muted */
+  /* Liquid Glass Colours */
+  --color-bg: 10 14 39;              /* Deep midnight blue background */
+  --color-foreground: 240 244 248;   /* Light text */
+  --color-primary: 96 165 250;       /* Bright blue for accents */
+  --color-primary-hover: 59 130 246; /* Deeper blue on hover */
+  --color-secondary: 167 139 246;    /* Purple accent */
+  --color-surface: 15 20 42;         /* Slightly lighter surface */
+  --color-muted: 148 163 184;        /* Muted text */
+  
+  /* Glass effect properties */
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-bg-hover: rgba(255, 255, 255, 0.08);
+  --glass-bg-active: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-border-hover: rgba(96, 165, 250, 0.3);
+  --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  --glass-shadow-hover: 0 12px 40px rgba(96, 165, 250, 0.2);
   
   /* Radius */
-  --radius: 0.5rem;
-  
-  /* Elevation / shadows */
-  --shadow-small: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --radius: 1rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.5rem;
 }
 
 /* ==== Base element styling ==== */
@@ -29,15 +37,44 @@
     font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     line-height: 1.5;
     color: rgb(var(--color-foreground));
-    background-color: rgb(var(--color-bg));
+    background: #000000;
     scroll-behavior: smooth;
+    min-height: 100vh;
   }
 
   body {
     min-height: 100vh;
     margin: 0;
     padding: 0;
-    background-color: rgb(var(--color-bg));
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Animated background gradient overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    /* background: 
+      radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 50%); */
+    pointer-events: none;
+    animation: pulse 20s ease-in-out infinite;
+    z-index: 0;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+  }
+
+  /* Ensure content is above background */
+  #root {
+    position: relative;
+    z-index: 1;
   }
 
   a {
@@ -70,35 +107,115 @@
   }
 }
 
-/* ==== Utility / Component styles for “modern look” ==== */
+/* ==== Liquid Glass Component Styles ==== */
 @layer components {
-  .card {
-    background-color: rgb(var(--color-bg));
-    border-radius: var(--radius);
-    box-shadow: var(--shadow-small);
-    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease;
+  .glass-card {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--glass-shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
-  .card:hover {
-    box-shadow: var(--shadow-medium);
+
+  .glass-card:hover {
+    background: var(--glass-bg-hover);
+    border-color: var(--glass-border-hover);
+    box-shadow: var(--glass-shadow-hover);
     transform: translateY(-2px);
   }
 
-  .btn-primary {
-    @apply px-4 py-2 font-semibold text-white rounded-lg;
-    background-color: rgb(var(--color-primary));
-    transition: background-color 0.2s ease;
-  }
-  .btn-primary:hover {
-    background-color: rgb(var(--color-primary-hover));
+  .glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--glass-shadow);
+    padding: 1.5rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Form elements */
-  .input-field {
-    @apply w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-base;
-    transition: border-color 0.2s ease;
+  .glass-panel:hover {
+    background: var(--glass-bg-hover);
+    border-color: var(--glass-border-hover);
+    box-shadow: var(--glass-shadow-hover);
   }
-  .input-field:focus {
-    @apply border-blue-500 outline-none ring-1 ring-blue-500;
+
+  .glass-button {
+    background: linear-gradient(135deg, rgb(var(--color-primary)) 0%, rgb(var(--color-secondary)) 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius);
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(96, 165, 250, 0.3);
+  }
+
+  .glass-button:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(96, 165, 250, 0.4);
+  }
+
+  .glass-button:active {
+    transform: translateY(0) scale(0.98);
+  }
+
+  .glass-input {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    padding: 0.75rem 1rem;
+    color: rgb(var(--color-foreground));
+    width: 100%;
+    transition: all 0.2s ease;
+  }
+
+  .glass-input:focus {
+    outline: none;
+    border-color: rgba(96, 165, 250, 0.5);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 20px rgba(96, 165, 250, 0.2);
+  }
+
+  .glass-input::placeholder {
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  /* Shimmer effect for important elements */
+  .shimmer {
+    background: linear-gradient(135deg, rgb(var(--color-primary)) 0%, rgb(var(--color-secondary)) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0%, 100% { 
+      filter: brightness(1) saturate(1); 
+    }
+    50% { 
+      filter: brightness(1.2) saturate(1.3); 
+    }
+  }
+
+  /* Frosted glass modal overlay */
+  .glass-overlay {
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
+  }
+
+  /* Liquid loading animation */
+  @keyframes liquid-float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .liquid-float {
+    animation: liquid-float 3s ease-in-out infinite;
   }
 }
 
@@ -107,16 +224,36 @@
   .text-muted {
     color: rgb(var(--color-muted));
   }
-  .bg-surface {
-    background-color: rgb(var(--color-surface));
+  
+  .text-gradient {
+    background: linear-gradient(135deg, rgb(var(--color-primary)) 0%, rgb(var(--color-secondary)) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .bg-glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(180%);
+  }
+
+  /* Custom scrollbar for glass theme */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(96, 165, 250, 0.3);
+    border-radius: 4px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(96, 165, 250, 0.5);
   }
 }
-
-/* styles/glass.css */
-
-/* .glass-panel {
-  @apply bg-glassBase backdrop-blur-glass border border-glassBorder rounded-xl shadow-glass;
-}
-.dark .glass-panel {
-  @apply bg-glassDarkBase border-glassDarkBorder;
-} */
