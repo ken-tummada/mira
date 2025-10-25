@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+/* ==== Tailwind directives ==== */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==== Root and CSS variables for theme ==== */
+:root {
+  /* Colours */
+  --color-bg: 255 255 255;           /* white background default */
+  --color-foreground: 22 24 35;      /* dark text */
+  --color-primary: 59 130 246;       /* Tailwind blue-500 */
+  --color-primary-hover: 37 99 235;   /* Tailwind blue-600 */
+  --color-surface: 249 250 251;      /* light surface background (gray-50) */
+  --color-muted: 100 116 139;        /* gray-500 text for muted */
+  
+  /* Radius */
+  --radius: 0.5rem;
+  
+  /* Elevation / shadows */
+  --shadow-small: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-medium: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* ==== Base element styling ==== */
+@layer base {
+  html {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    line-height: 1.5;
+    color: rgb(var(--color-foreground));
+    background-color: rgb(var(--color-bg));
+    scroll-behavior: smooth;
+  }
+
+  body {
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background-color: rgb(var(--color-bg));
+  }
+
+  a {
+    color: rgb(var(--color-primary));
+    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+  }
+  a:hover,
+  a:focus {
+    color: rgb(var(--color-primary-hover));
+    outline: none;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  img {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Modern box-sizing reset */
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+}
+
+/* ==== Utility / Component styles for “modern look” ==== */
+@layer components {
+  .card {
+    background-color: rgb(var(--color-bg));
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-small);
+    transition: box-shadow 0.2s ease-in-out, transform 0.2s ease;
+  }
+  .card:hover {
+    box-shadow: var(--shadow-medium);
+    transform: translateY(-2px);
+  }
+
+  .btn-primary {
+    @apply px-4 py-2 font-semibold text-white rounded-lg;
+    background-color: rgb(var(--color-primary));
+    transition: background-color 0.2s ease;
+  }
+  .btn-primary:hover {
+    background-color: rgb(var(--color-primary-hover));
+  }
+
+  /* Form elements */
+  .input-field {
+    @apply w-full px-3 py-2 rounded-lg border border-gray-300 bg-white text-base;
+    transition: border-color 0.2s ease;
+  }
+  .input-field:focus {
+    @apply border-blue-500 outline-none ring-1 ring-blue-500;
+  }
+}
+
+/* ==== Utility tweaks ==== */
+@layer utilities {
+  .text-muted {
+    color: rgb(var(--color-muted));
+  }
+  .bg-surface {
+    background-color: rgb(var(--color-surface));
+  }
+}
+
+/* styles/glass.css */
+
+/* .glass-panel {
+  @apply bg-glassBase backdrop-blur-glass border border-glassBorder rounded-xl shadow-glass;
+}
+.dark .glass-panel {
+  @apply bg-glassDarkBase border-glassDarkBorder;
+} */
