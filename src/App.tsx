@@ -83,17 +83,18 @@ function App() {
     >
       {/* Fade entire UI when in mirror mode */}
       <div className={`transition-opacity duration-300 ${mirror ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
-        <NewsProvider>
           <div className="min-h-screen flex items-center justify-center p-8">
             <div className="max-w-6xl w-full">
               {/* Widget Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-              <WeatherInfoProvider>
-                <WeatherWidget />
-              </WeatherInfoProvider>
+                <WeatherInfoProvider>
+                  <WeatherWidget />
+                </WeatherInfoProvider>
                 <ClockWidget />
                 <CalendarWidget events={mockEvents} />
-                <NewsWidget />
+                <NewsProvider>
+                  <NewsWidget />
+                </NewsProvider>
               </div>
 
               {/* Demo Section */}
@@ -110,7 +111,6 @@ function App() {
               </div>
             </div>
           </div>
-        </NewsProvider>
       </div>
 
       {/* Tiny badge to confirm triggers */}
