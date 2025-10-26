@@ -6,7 +6,11 @@ export type UseVoiceOpts = {
   autoStopMs?: number;
 };
 
-function useVoice({ lang = "en-US", interim = false, autoStopMs = 800 }: UseVoiceOpts = {}) {
+function useVoice({
+  lang = "en-US",
+  interim = false,
+  autoStopMs = 800,
+}: UseVoiceOpts = {}) {
   const [supported, setSupported] = useState(false);
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState("");
@@ -14,7 +18,9 @@ function useVoice({ lang = "en-US", interim = false, autoStopMs = 800 }: UseVoic
   const autoTimer = useRef<any>(null);
 
   useEffect(() => {
-    const SR: any = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+    const SR: any =
+      (window as any).webkitSpeechRecognition ||
+      (window as any).SpeechRecognition;
     if (!SR) {
       setSupported(false);
       return;
@@ -28,7 +34,8 @@ function useVoice({ lang = "en-US", interim = false, autoStopMs = 800 }: UseVoic
 
     r.onresult = (e: any) => {
       let t = "";
-      for (let i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript;
+      for (let i = e.resultIndex; i < e.results.length; i++)
+        t += e.results[i][0].transcript;
       setTranscript(t.trim());
 
       // stop listening shortly after user pauses
@@ -63,7 +70,15 @@ function useVoice({ lang = "en-US", interim = false, autoStopMs = 800 }: UseVoic
     synth.speak(u);
   };
 
-  return { supported, listening, transcript, setTranscript, start, stop, speak };
+  return {
+    supported,
+    listening,
+    transcript,
+    setTranscript,
+    start,
+    stop,
+    speak,
+  };
 }
 
 export { useVoice };

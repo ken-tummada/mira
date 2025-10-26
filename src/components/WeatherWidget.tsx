@@ -33,7 +33,7 @@ export const WeatherWidget: React.FC = () => {
   }
 
   return (
-    <div className="glass-panel w-full">
+    <div className="glass-panel w-full h-full">
       <div className="flex items-center space-x-4 mb-4">
         <img
           src={`https://openweathermap.org/img/wn/${weather?.weather[0]?.icon}.png`}

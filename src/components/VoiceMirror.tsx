@@ -3,7 +3,15 @@ import { useVoice } from "../providers/useVoice";
 import { sendToAI } from "../providers/SendToAI";
 
 function VoiceMirror() {
-  const { supported, listening, transcript, setTranscript, start, stop, speak } = useVoice();
+  const {
+    supported,
+    listening,
+    transcript,
+    setTranscript,
+    start,
+    stop,
+    speak,
+  } = useVoice();
   const [lastReply, setLastReply] = useState("");
 
   // Voice commands that navigate your widgets
@@ -11,28 +19,36 @@ function VoiceMirror() {
     {
       match: /\b(weather|temperature|forecast)\b/i,
       run: async () => {
-        window.dispatchEvent(new CustomEvent("mirror:navigate", { detail: "weather" }));
+        window.dispatchEvent(
+          new CustomEvent("mirror:navigate", { detail: "weather" }),
+        );
         return "Showing today's weather.";
       },
     },
     {
       match: /\b(news|headlines)\b/i,
       run: async () => {
-        window.dispatchEvent(new CustomEvent("mirror:navigate", { detail: "news" }));
+        window.dispatchEvent(
+          new CustomEvent("mirror:navigate", { detail: "news" }),
+        );
         return "Here are the latest headlines.";
       },
     },
     {
       match: /\b(calendar|schedule|events)\b/i,
       run: async () => {
-        window.dispatchEvent(new CustomEvent("mirror:navigate", { detail: "calendar" }));
+        window.dispatchEvent(
+          new CustomEvent("mirror:navigate", { detail: "calendar" }),
+        );
         return "Opening your calendar.";
       },
     },
     {
       match: /\b(time|clock|hour)\b/i,
       run: async () => {
-        window.dispatchEvent(new CustomEvent("mirror:navigate", { detail: "clock" }));
+        window.dispatchEvent(
+          new CustomEvent("mirror:navigate", { detail: "clock" }),
+        );
         return "Here's the current time.";
       },
     },
@@ -99,7 +115,9 @@ function VoiceMirror() {
       <div style={{ marginTop: "0.6rem", fontSize: "0.9rem" }}>
         <b>You:</b> {transcript || <em>(press button and speak)</em>}
       </div>
-      <div style={{ marginTop: "0.3rem", fontSize: "0.9rem", color: "#a5b4fc" }}>
+      <div
+        style={{ marginTop: "0.3rem", fontSize: "0.9rem", color: "#a5b4fc" }}
+      >
         <b>Mirror:</b> {lastReply}
       </div>
     </div>

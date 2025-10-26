@@ -2,21 +2,21 @@ import React, { createContext, useContext, useState, useCallback } from "react";
 import type { ReactNode } from "react";
 
 interface TravelInfo {
-  method: string
+  method: string;
   duration: number;
   distance: number;
 }
 interface TravelTimeContextType {
-  travelTime: TravelInfo[] | null
+  travelTime: TravelInfo[] | null;
   loading: boolean;
   error: string | null;
 }
 
 const TravelMode = {
-  DRIVING: 'DRIVING',
-  TRANSIT: 'TRANSIT',
-  BICYCLING: 'BICYCLING',
-  WALKING: 'WALKING',
+  DRIVING: "DRIVING",
+  TRANSIT: "TRANSIT",
+  BICYCLING: "BICYCLING",
+  WALKING: "WALKING",
 };
 
 const TravelTimeContext = createContext<TravelTimeContextType | null>(null);
@@ -33,17 +33,17 @@ export const TravelTimeProvider: React.FC<{ children: ReactNode }> = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  const url = new URL(
+    "https://routes.googleapis.com/directions/v2:computeRoutes",
+  );
+  url.searchParams.append("origin", MOCK_LOCATION[0]);
+  url.searchParams.append("destination", MOCK_LOCATION[1]);
+  url.searchParams.append("travelmode", "");
 
-    const url = new URL("https://routes.googleapis.com/directions/v2:computeRoutes");
-    url.searchParams.append("origin", MOCK_LOCATION[0]);
-    url.searchParams.append("destination", MOCK_LOCATION[1]);
-    url.searchParams.append("travelmode", "");
-
-    await fetch(url, );
+  await fetch(url);
 
   const getTravelTime = useCallback(
     async (origin: string, destination: string, mode: TravelMode = "DRIVE") => {
-
       setLoading(true);
       setError(null);
 
@@ -79,9 +79,7 @@ export const TravelTimeProvider: React.FC<{ children: ReactNode }> = ({
   );
 
   return (
-    <TravelTimeContext.Provider
-      value={{ travelTime, loading, error }}
-    >
+    <TravelTimeContext.Provider value={{ travelTime, loading, error }}>
       {children}
     </TravelTimeContext.Provider>
   );
