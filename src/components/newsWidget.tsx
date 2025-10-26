@@ -7,7 +7,7 @@ export const NewsWidget: React.FC = () => {
   return (
     <div className="glass-panel p-5">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-xl font-semibold text-blue-300">Today’s Headlines</h2>
+        <h2 className="text-xl font-semibold text-blue-300">Today's Headlines</h2>
         <button
           className="px-3 py-1 text-sm bg-white/10 rounded hover:bg-white/20"
           onClick={refresh}

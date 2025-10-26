@@ -71,6 +71,9 @@ export function GestureProvider({
     return "none";
   }
 
+  let state: "show" | "hide" = "show";
+  let locked = false;
+
   const ctx = useMemo<Ctx>(
     () => ({
       enable: async () => {
@@ -105,8 +108,7 @@ export function GestureProvider({
         });
 
         hands.onResults((res: Results) => {
-          const now = performance.now();
-          if (now < cooldownUntilRef.current) return; // in cooldown
+          if(locked) return;
 
           const lm = res.multiHandLandmarks?.[0];
           if (!lm) {
@@ -125,17 +127,30 @@ export function GestureProvider({
           if (pendingRef.current === g) {
             confirmCountRef.current += 1;
           } else {
-            pendingRef.current = g;
             confirmCountRef.current = 1;
           }
 
+          pendingRef.current = g;
+
           if (confirmCountRef.current >= framesConfirm) {
             confirmCountRef.current = 0;
+            if (g === "open" && state !== "hide") {
+              onOpenHand?.();
+              state = "hide"
+              locked = true;
+              setTimeout(() => {
+                locked = false; 
+              }, cooldownMs);
+            }
+            if (g === "fist" && state !== "show") {
+              onFist?.();
+              state = "show"
+              locked = true;
+              setTimeout(() => {
+                locked = false; 
+              }, cooldownMs);
+            }
             pendingRef.current = "none";
-            cooldownUntilRef.current = now + cooldownMs;
-
-            if (g === "open") onOpenHand?.();
-            else if (g === "fist") onFist?.();
           }
         });
 

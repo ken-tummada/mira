@@ -71,7 +71,7 @@ function App() {
   return (
     <GestureProvider
       framesConfirm={4}          // steadier detection
-      cooldownMs={2500}          // prevents flicker
+      cooldownMs={1600}          // prevents flicker
       onOpenHand={() => {        // 🖐 4–5 fingers → hide UI
         setMirror(true);
         showFlash("hide");
@@ -95,19 +95,6 @@ function App() {
                 <NewsProvider>
                   <NewsWidget />
                 </NewsProvider>
-              </div>
-
-              {/* Demo Section */}
-              <div className="glass-panel text-center">
-                <h2 className="text-3xl font-bold mb-4 text-gradient">
-                  Beautiful Glassmorphism
-                </h2>
-                <p className="text-muted mb-6 max-w-2xl mx-auto">
-                  This theme features frosted glass effects, smooth animations, and a modern
-                  aesthetic that creates depth and visual interest. Every element is designed
-                  to feel premium and interactive.
-                </p>
-                <button className="glass-button">Get Started</button>
               </div>
             </div>
           </div>
