@@ -1,7 +1,12 @@
+import React, { useState } from "react";
+
 import { WeatherWidget } from "./components/WeatherWidget";
 import { ClockWidget } from "./components/ClockWidget";
 import { CalendarWidget } from "./components/CalendarWidget";
+import { NewsProvider } from "./providers/NewsProvider";
+import { GestureProvider } from "./providers/GestureProvider";
 import { WeatherInfoProvider } from '@/providers/WeatherInfoProvider';
+import { NewsWidget } from "./components/newsWidget";
 
 const today = new Date();
 const tomorrow = new Date(today);
@@ -55,29 +60,69 @@ const mockEvents = [
 ];
 
 function App() {
+  const [mirror, setMirror] = useState(false);
+  const [flash, setFlash] = useState<null | "hide" | "show">(null);
+
+  const showFlash = (t: "hide" | "show") => {
+    setFlash(t);
+    setTimeout(() => setFlash(null), 700);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center p-8">
-      <div className="max-w-6xl w-full">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-          <WeatherInfoProvider>
-            <WeatherWidget />
-          </WeatherInfoProvider>
-          <ClockWidget />
-          <CalendarWidget events={mockEvents} />
-        </div>
-        <div className="glass-panel text-center">
-          <h2 className="text-3xl font-bold mb-4 text-gradient">
-            Beautiful Glassmorphism
-          </h2>
-          <p className="text-muted mb-6 max-w-2xl mx-auto">
-            This theme features frosted glass effects, smooth animations, and a
-            modern aesthetic that creates depth and visual interest. Every
-            element is designed to feel premium and interactive.
-          </p>
-          <button className="glass-button">Get Started</button>
-        </div>
+    <GestureProvider
+      framesConfirm={4}          // steadier detection
+      cooldownMs={2500}          // prevents flicker
+      onOpenHand={() => {        // 🖐 4–5 fingers → hide UI
+        setMirror(true);
+        showFlash("hide");
+      }}
+      onFist={() => {            // ✊ 0–1 fingers → show UI
+        setMirror(false);
+        showFlash("show");
+      }}
+    >
+      {/* Fade entire UI when in mirror mode */}
+      <div className={`transition-opacity duration-300 ${mirror ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
+        <NewsProvider>
+          <div className="min-h-screen flex items-center justify-center p-8">
+            <div className="max-w-6xl w-full">
+              {/* Widget Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              <WeatherInfoProvider>
+                <WeatherWidget />
+              </WeatherInfoProvider>
+                <ClockWidget />
+                <CalendarWidget events={mockEvents} />
+                <NewsWidget />
+              </div>
+
+              {/* Demo Section */}
+              <div className="glass-panel text-center">
+                <h2 className="text-3xl font-bold mb-4 text-gradient">
+                  Beautiful Glassmorphism
+                </h2>
+                <p className="text-muted mb-6 max-w-2xl mx-auto">
+                  This theme features frosted glass effects, smooth animations, and a modern
+                  aesthetic that creates depth and visual interest. Every element is designed
+                  to feel premium and interactive.
+                </p>
+                <button className="glass-button">Get Started</button>
+              </div>
+            </div>
+          </div>
+        </NewsProvider>
       </div>
-    </div>
+
+      {/* Tiny badge to confirm triggers */}
+      {flash && (
+        <div
+          className="fixed top-4 right-4 z-50 px-3 py-2 rounded-lg shadow-lg"
+          style={{ background: "rgba(30, 58, 138, 0.85)", color: "white" }}
+        >
+          {flash === "hide" ? "🖐 Hide (open hand)" : "✊ Show (fist)"}
+        </div>
+      )}
+    </GestureProvider>
   );
 }
 
