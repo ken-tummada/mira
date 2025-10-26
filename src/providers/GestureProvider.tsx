@@ -4,14 +4,16 @@ import React, {
   useEffect,
   useMemo,
   useRef,
+  useState,
 } from "react";
 import { Hands, type Results, type NormalizedLandmark } from "@mediapipe/hands";
 import { Camera } from "@mediapipe/camera_utils";
 
-type Ctx = { enable(): void; disable(): void };
-const GestureContext = createContext<Ctx>({
+type GestureContextType = { enable(): void; disable(): void, toggleAI: boolean };
+const GestureContext = createContext<GestureContextType>({
   enable: () => {},
   disable: () => {},
+  toggleAI: false,
 });
 
 type Props = {
@@ -37,6 +39,8 @@ export function GestureProvider({
   const pendingRef = useRef<"open" | "fist" | "none">("none");
   const confirmCountRef = useRef(0);
   const cooldownUntilRef = useRef(0);
+
+  const [toggleAI, setToggleAI] = useState<boolean>(false);
 
   const waitForLoadedMeta = (video: HTMLVideoElement) =>
     new Promise<void>((resolve) => {
@@ -89,17 +93,18 @@ export function GestureProvider({
     );
   }
 
-  function classify(lm: NormalizedLandmark[]): "open" | "fist" | "none" {
+  function classify(lm: NormalizedLandmark[]): "open" | "fist" | "none" | "AI-toggle" {
     const n = countExtended(lm);
     if (n >= 4) return "open";
     if (n <= 1) return "fist";
+    if (n === 3) return "AI-toggle";
     return "none";
   }
 
   let state: "show" | "hide" = "show";
   let locked = false;
 
-  const ctx = useMemo<Ctx>(
+  const guestureContext = useMemo<GestureContextType>(
     () => ({
       enable: async () => {
         if (enabledRef.current) return;
@@ -145,6 +150,8 @@ export function GestureProvider({
 
           const g = classify(lm); // "open" | "fist" | "none"
 
+          console.log(g);
+
           if (g === "none") {
             confirmCountRef.current = Math.max(0, confirmCountRef.current - 1);
             return;
@@ -154,6 +161,15 @@ export function GestureProvider({
             confirmCountRef.current += 1;
           } else {
             confirmCountRef.current = 1;
+          }
+
+          if(g === "AI-toggle") {
+            setToggleAI(!toggleAI);
+            locked = true;
+            setTimeout(() => {
+                locked = false;
+              }, cooldownMs);
+            return;
           }
 
           pendingRef.current = g;
@@ -232,18 +248,19 @@ export function GestureProvider({
         confirmCountRef.current = 0;
         cooldownUntilRef.current = 0;
       },
+      toggleAI: false
     }),
     [framesConfirm, cooldownMs, onOpenHand, onFist],
   );
 
   useEffect(() => {
-    ctx.enable();
-    return () => ctx.disable();
+    guestureContext.enable();
+    return () => guestureContext.disable();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <GestureContext.Provider value={ctx}>{children}</GestureContext.Provider>
+    <GestureContext.Provider value={{"disable": guestureContext.disable, "enable": guestureContext.enable, toggleAI}}>{children}</GestureContext.Provider>
   );
 }
 

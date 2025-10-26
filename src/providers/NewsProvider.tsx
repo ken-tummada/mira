@@ -144,12 +144,14 @@ export const NewsProvider = ({ children }: { children: React.ReactNode }) => {
       try {
         const items = await fetchSectionHeadlines();
         setHeadlines(items);
+        setLoading(false);
+        break;
       } catch (e: any) {
         setError(e?.message || "Failed to load news");
         setHeadlines([]);
+        setLoading(false);
       }
-      setLoading(false);
-  }
+    }
   };
 
   useEffect(() => {

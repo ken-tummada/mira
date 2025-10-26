@@ -4,7 +4,7 @@ import { WeatherWidget } from "./components/WeatherWidget";
 import { ClockWidget } from "./components/ClockWidget";
 import { CalendarWidget } from "./components/CalendarWidget";
 import { NewsProvider } from "./providers/NewsProvider";
-import { GestureProvider } from "./providers/GestureProvider";
+import { GestureProvider, useGestures } from "./providers/GestureProvider";
 import { WeatherInfoProvider } from "./providers/WeatherInfoProvider";
 
 import { NewsWidget } from "./components/newsWidget"; // default import
@@ -65,6 +65,8 @@ const mockEvents = [
 export default function App() {
   const [mirror, setMirror] = useState(false);
   const [flash, setFlash] = useState<null | "hide" | "show">(null);
+
+  const { toggleAI } = useGestures();
 
   // Refs for voice navigation targets
   const weatherRef = useRef<HTMLDivElement | null>(null);
@@ -159,11 +161,11 @@ export default function App() {
               </NewsProvider>
             </div>
           </div>
-          {!mirror && (
+          {(!mirror && toggleAI) ? (
             <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
               <VoiceMirror />
             </div>
-          )}
+          ) : <></>}
         </div>
 
         {/* Tiny badge to confirm gesture triggers */}
