@@ -8,14 +8,14 @@
 /* ==== Root and CSS variables for liquid glass theme ==== */
 :root {
   /* Liquid Glass Colours */
-  --color-bg: 10 14 39;              /* Deep midnight blue background */
-  --color-foreground: 240 244 248;   /* Light text */
-  --color-primary: 96 165 250;       /* Bright blue for accents */
+  --color-bg: 10 14 39; /* Deep midnight blue background */
+  --color-foreground: 240 244 248; /* Light text */
+  --color-primary: 96 165 250; /* Bright blue for accents */
   --color-primary-hover: 59 130 246; /* Deeper blue on hover */
-  --color-secondary: 167 139 246;    /* Purple accent */
-  --color-surface: 15 20 42;         /* Slightly lighter surface */
-  --color-muted: 148 163 184;        /* Muted text */
-  
+  --color-secondary: 167 139 246; /* Purple accent */
+  --color-surface: 15 20 42; /* Slightly lighter surface */
+  --color-muted: 148 163 184; /* Muted text */
+
   /* Glass effect properties */
   --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-bg-hover: rgba(255, 255, 255, 0.08);
@@ -24,7 +24,7 @@
   --glass-border-hover: rgba(96, 165, 250, 0.3);
   --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
   --glass-shadow-hover: 0 12px 40px rgba(96, 165, 250, 0.2);
-  
+
   /* Radius */
   --radius: 1rem;
   --radius-lg: 1.25rem;
@@ -34,7 +34,15 @@
 /* ==== Base element styling ==== */
 @layer base {
   html {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family:
+      system-ui,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      "Helvetica Neue",
+      Arial,
+      sans-serif;
     line-height: 1.5;
     color: rgb(var(--color-foreground));
     background: #000000;
@@ -52,7 +60,7 @@
 
   /* Animated background gradient overlay */
   body::before {
-    content: '';
+    content: "";
     position: fixed;
     top: 0;
     left: 0;
@@ -67,8 +75,13 @@
   }
 
   @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.6;
+    }
   }
 
   /* Ensure content is above background */
@@ -102,7 +115,9 @@
   }
 
   /* Modern box-sizing reset */
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     box-sizing: border-box;
   }
 }
@@ -142,7 +157,11 @@
   }
 
   .glass-button {
-    background: linear-gradient(135deg, rgb(var(--color-primary)) 0%, rgb(var(--color-secondary)) 100%);
+    background: linear-gradient(
+      135deg,
+      rgb(var(--color-primary)) 0%,
+      rgb(var(--color-secondary)) 100%
+    );
     color: white;
     border: none;
     border-radius: var(--radius);
@@ -186,7 +205,11 @@
 
   /* Shimmer effect for important elements */
   .shimmer {
-    background: linear-gradient(135deg, rgb(var(--color-primary)) 0%, rgb(var(--color-secondary)) 100%);
+    background: linear-gradient(
+      135deg,
+      rgb(var(--color-primary)) 0%,
+      rgb(var(--color-secondary)) 100%
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -194,11 +217,12 @@
   }
 
   @keyframes shimmer {
-    0%, 100% { 
-      filter: brightness(1) saturate(1); 
+    0%,
+    100% {
+      filter: brightness(1) saturate(1);
     }
-    50% { 
-      filter: brightness(1.2) saturate(1.3); 
+    50% {
+      filter: brightness(1.2) saturate(1.3);
     }
   }
 
@@ -210,8 +234,13 @@
 
   /* Liquid loading animation */
   @keyframes liquid-float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-10px); }
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
   }
 
   .liquid-float {
@@ -224,9 +253,13 @@
   .text-muted {
     color: rgb(var(--color-muted));
   }
-  
+
   .text-gradient {
-    background: linear-gradient(135deg, rgb(var(--color-primary)) 0%, rgb(var(--color-secondary)) 100%);
+    background: linear-gradient(
+      135deg,
+      rgb(var(--color-primary)) 0%,
+      rgb(var(--color-secondary)) 100%
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

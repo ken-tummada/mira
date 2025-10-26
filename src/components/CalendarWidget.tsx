@@ -25,8 +25,7 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = ({
       eventDate.setHours(0, 0, 0, 0);
       return eventDate >= now;
     })
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-    .slice(0, 5); // Show max 5 upcoming events
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   const formatDate = (date: Date) => {
     const eventDate = new Date(date);
@@ -63,14 +62,14 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = ({
   };
 
   return (
-    <div className="glass-panel w-full max-w-md">
+    <div className="glass-panel">
       <div className="mb-4">
         <h3 className="text-xl font-semibold text-gradient">Upcoming Events</h3>
       </div>
 
       {upcomingEvents.length > 0 ? (
         <div className="space-y-3">
-          {upcomingEvents.map((event, index) => {
+          {upcomingEvents.slice(0, 2).map((event, index) => {
             const daysUntil = getDaysUntil(event.date);
 
             return (

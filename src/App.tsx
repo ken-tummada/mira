@@ -81,12 +81,19 @@ export default function App() {
 
   return (
     <GestureProvider
-      framesConfirm={4}
-      cooldownMs={1600}
-      onOpenHand={() => { setMirror(true); showFlash("hide"); }}   // 🖐 hide UI
-      onFist={() => { setMirror(false); showFlash("show"); }}      // ✊ show UI
+      framesConfirm={2} // steadier detection
+      cooldownMs={600} // prevents flicker
+      onOpenHand={() => {
+        // 🖐 4–5 fingers → hide UI
+        setMirror(true);
+        showFlash("hide");
+      }}
+      onFist={() => {
+        // ✊ 0–1 fingers → show UI
+        setMirror(false);
+        showFlash("show");
+      }}
     >
-      {/* Always paint a dark bg so you see something */}
       <div style={{ background: "#0b0b0f", color: "#fff", minHeight: "100vh" }}>
         {/* Fade entire UI when in mirror mode */}
         <div className={`transition-opacity duration-300 ${mirror ? "opacity-0 pointer-events-none" : "opacity-100"}`}>

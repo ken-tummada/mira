@@ -1,16 +1,25 @@
-import React, { createContext, useContext, useEffect, useMemo, useRef } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 import { Hands, type Results, type NormalizedLandmark } from "@mediapipe/hands";
 import { Camera } from "@mediapipe/camera_utils";
 
-type Ctx = { enable(): void; disable(): void; };
-const GestureContext = createContext<Ctx>({ enable: () => {}, disable: () => {} });
+type Ctx = { enable(): void; disable(): void };
+const GestureContext = createContext<Ctx>({
+  enable: () => {},
+  disable: () => {},
+});
 
 type Props = {
   children: React.ReactNode;
-  framesConfirm?: number;   // consecutive frames needed (default 3–4)
-  cooldownMs?: number;      // ignore further gestures for N ms after a trigger
-  onOpenHand?: () => void;  // 🖐 show 4–5 fingers
-  onFist?: () => void;      // ✊ 0–1 fingers
+  framesConfirm?: number; // consecutive frames needed (default 3–4)
+  cooldownMs?: number; // ignore further gestures for N ms after a trigger
+  onOpenHand?: () => void; // 🖐 show 4–5 fingers
+  onFist?: () => void; // ✊ 0–1 fingers
 };
 
 export function GestureProvider({
@@ -32,21 +41,31 @@ export function GestureProvider({
   const waitForLoadedMeta = (video: HTMLVideoElement) =>
     new Promise<void>((resolve) => {
       if (video.readyState >= 1) return resolve();
-      const onLoaded = () => { video.removeEventListener("loadedmetadata", onLoaded); resolve(); };
+      const onLoaded = () => {
+        video.removeEventListener("loadedmetadata", onLoaded);
+        resolve();
+      };
       video.addEventListener("loadedmetadata", onLoaded);
     });
 
   // --- helpers ---
   function dist(a: NormalizedLandmark, b: NormalizedLandmark) {
-    const dx = a.x - b.x, dy = a.y - b.y;
+    const dx = a.x - b.x,
+      dy = a.y - b.y;
     return Math.hypot(dx, dy);
   }
 
   // Is a finger extended? (tip farther from wrist than PIP by a margin)
-  function isExtended(lm: NormalizedLandmark[], tipIdx: number, pipIdx: number, wrist: NormalizedLandmark, scale: number) {
+  function isExtended(
+    lm: NormalizedLandmark[],
+    tipIdx: number,
+    pipIdx: number,
+    wrist: NormalizedLandmark,
+    scale: number,
+  ) {
     const tipW = dist(lm[tipIdx], wrist);
     const pipW = dist(lm[pipIdx], wrist);
-    return (tipW - pipW) > 0.06 * scale; // raise to 0.07–0.08 if too sensitive
+    return tipW - pipW > 0.06 * scale; // raise to 0.07–0.08 if too sensitive
   }
 
   // Count extended fingers (thumb, index, middle, ring, pinky)
@@ -55,13 +74,19 @@ export function GestureProvider({
     const midMCP = lm[9]; // scale reference
     const scale = Math.max(0.0001, dist(wrist, midMCP));
 
-    const thumb  = isExtended(lm, 4, 2, wrist, scale);
-    const index  = isExtended(lm, 8, 6, wrist, scale);
-    const middle = isExtended(lm, 12,10, wrist, scale);
-    const ring   = isExtended(lm, 16,14, wrist, scale);
-    const pinky  = isExtended(lm, 20,18, wrist, scale);
+    const thumb = isExtended(lm, 4, 2, wrist, scale);
+    const index = isExtended(lm, 8, 6, wrist, scale);
+    const middle = isExtended(lm, 12, 10, wrist, scale);
+    const ring = isExtended(lm, 16, 14, wrist, scale);
+    const pinky = isExtended(lm, 20, 18, wrist, scale);
 
-    return (thumb?1:0) + (index?1:0) + (middle?1:0) + (ring?1:0) + (pinky?1:0);
+    return (
+      (thumb ? 1 : 0) +
+      (index ? 1 : 0) +
+      (middle ? 1 : 0) +
+      (ring ? 1 : 0) +
+      (pinky ? 1 : 0)
+    );
   }
 
   function classify(lm: NormalizedLandmark[]): "open" | "fist" | "none" {
@@ -97,7 +122,8 @@ export function GestureProvider({
 
         // MediaPipe Hands
         const hands = new Hands({
-          locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/${file}`,
+          locateFile: (file) =>
+            `https://cdn.jsdelivr.net/npm/@mediapipe/hands@0.4.1646424915/${file}`,
         });
         hands.setOptions({
           maxNumHands: 1,
@@ -108,7 +134,7 @@ export function GestureProvider({
         });
 
         hands.onResults((res: Results) => {
-          if(locked) return;
+          if (locked) return;
 
           const lm = res.multiHandLandmarks?.[0];
           if (!lm) {
@@ -136,18 +162,18 @@ export function GestureProvider({
             confirmCountRef.current = 0;
             if (g === "open" && state !== "hide") {
               onOpenHand?.();
-              state = "hide"
+              state = "hide";
               locked = true;
               setTimeout(() => {
-                locked = false; 
+                locked = false;
               }, cooldownMs);
             }
             if (g === "fist" && state !== "show") {
               onFist?.();
-              state = "show"
+              state = "show";
               locked = true;
               setTimeout(() => {
-                locked = false; 
+                locked = false;
               }, cooldownMs);
             }
             pendingRef.current = "none";
@@ -158,18 +184,28 @@ export function GestureProvider({
 
         // Camera
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "user", width: { ideal: 1280 }, height: { ideal: 720 }, frameRate: { ideal: 30 } },
+          video: {
+            facingMode: "user",
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            frameRate: { ideal: 30 },
+          },
           audio: false,
         });
         const video = videoRef.current!;
         video.srcObject = stream;
 
         await waitForLoadedMeta(video);
-        try { await video.play(); } catch (err: any) { if (err?.name !== "AbortError") console.warn("[Gesture] play()", err); }
+        try {
+          await video.play();
+        } catch (err: any) {
+          if (err?.name !== "AbortError") console.warn("[Gesture] play()", err);
+        }
 
         cameraRef.current = new Camera(video, {
           onFrame: async () => {
-            const v = videoRef.current, h = handsRef.current;
+            const v = videoRef.current,
+              h = handsRef.current;
             if (!v || !h) return;
             await h.send({ image: v });
           },
@@ -183,7 +219,9 @@ export function GestureProvider({
         cameraRef.current?.stop();
         cameraRef.current = null;
         if (videoRef.current?.srcObject) {
-          (videoRef.current.srcObject as MediaStream).getTracks().forEach((t) => t.stop());
+          (videoRef.current.srcObject as MediaStream)
+            .getTracks()
+            .forEach((t) => t.stop());
           videoRef.current.srcObject = null;
         }
         videoRef.current?.remove();
@@ -195,7 +233,7 @@ export function GestureProvider({
         cooldownUntilRef.current = 0;
       },
     }),
-    [framesConfirm, cooldownMs, onOpenHand, onFist]
+    [framesConfirm, cooldownMs, onOpenHand, onFist],
   );
 
   useEffect(() => {
@@ -204,7 +242,9 @@ export function GestureProvider({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <GestureContext.Provider value={ctx}>{children}</GestureContext.Provider>;
+  return (
+    <GestureContext.Provider value={ctx}>{children}</GestureContext.Provider>
+  );
 }
 
 export function useGestures() {

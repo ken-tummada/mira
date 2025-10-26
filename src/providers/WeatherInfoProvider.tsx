@@ -33,10 +33,10 @@ export interface WeatherInfo {
     all: number;
   };
   rain?: {
-    '1h'?: number;
+    "1h"?: number;
   };
   snow?: {
-    '1h'?: number;
+    "1h"?: number;
   };
   dt: number;
   sys: {
@@ -54,12 +54,14 @@ export interface WeatherInfo {
 
 export interface WeatherInfoContextType {
   weather: WeatherInfo | null;
+  clothingSuggestion: string | null;
   loading: boolean;
   error: string | null;
 }
 
 const WeatherInfoContext = createContext<WeatherInfoContextType>({
   weather: null,
+  clothingSuggestion: "",
   loading: false,
   error: null,
 });
@@ -74,25 +76,59 @@ export const WeatherInfoProvider: React.FC<WeatherProviderProps> = ({
   units = "standard",
 }) => {
   const [weather, setWeather] = useState<WeatherInfo | null>(null);
+  const [clothingSuggestion, setClothingSuggestion] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const MOCK_UNIT = "metric";
+  const MOCK_UNIT = "imperial";
   const MOCK_LAT = "37.803600";
   const MOCK_LON = "-122.449158";
 
   useEffect(() => {
+    const fetchClothingSuggestion = async (data: WeatherInfo) => {
+      try {
+        const apiKey = import.meta.env.VITE_LLM_API_KEY;
+        const llmEndpoint = import.meta.env.VITE_LLM_ENDPOINT;
+        const prompt = `
+        Current weather: ${JSON.stringify(data)}.
+        Suggest what a person should wear today in a friendly one-sentence answer.
+      `;
+
+        const response = await fetch(llmEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": apiKey,
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                parts: [
+                  {
+                    text: prompt,
+                  },
+                ],
+              },
+            ],
+          }),
+        });
+
+        const json = await response.json();
+        const suggestion =
+          json.candidates?.[0]?.content?.parts[0].text.trim() ||
+          "No suggestion available.";
+        setClothingSuggestion(suggestion);
+      } catch (err: any) {
+        console.error("LLM error:", err);
+      }
+    };
     const fetchWeather = async () => {
       setLoading(true);
       setError(null);
       try {
         const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
         const date = new Date().toLocaleString().slice(0, 10);
-
-        if (!apiKey) throw new Error("Missing OpenWeather API key");
-        const url = new URL(
-          "https://api.openweathermap.org/data/2.5/weather",
-        );
+        const url = new URL("https://api.openweathermap.org/data/2.5/weather");
 
         // console.log(date);
         url.searchParams.set("lat", MOCK_LAT);
@@ -107,20 +143,21 @@ export const WeatherInfoProvider: React.FC<WeatherProviderProps> = ({
           throw new Error(`API error: ${resp.status} ${resp.statusText}`);
         }
         const data = (await resp.json()) as WeatherInfo;
-        console.log(data);
         setWeather(data);
+        await fetchClothingSuggestion(data);
       } catch (err: any) {
         setError(err.message || "Unknown error");
       } finally {
         setLoading(false);
       }
     };
-
     fetchWeather();
   }, [units]);
 
   return (
-    <WeatherInfoContext.Provider value={{ weather, loading, error }}>
+    <WeatherInfoContext.Provider
+      value={{ weather, clothingSuggestion, loading, error }}
+    >
       {children}
     </WeatherInfoContext.Provider>
   );
@@ -133,4 +170,3 @@ export const useWeatherInfo = () => {
   }
   return context;
 };
-
