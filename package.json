@@ -12,11 +12,13 @@
     "format:fix": "prettier --write ."
   },
   "dependencies": {
+    "@letta-ai/letta-client": "^0.0.68665",
     "@mediapipe/camera_utils": "^0.3.1675466862",
     "@mediapipe/hands": "^0.4.1675469240",
+    "@mediapipe/tasks-vision": "^0.10.22-rc.20250304",
+    "@vercel/node": "^5.5.0",
     "axios": "^1.12.2",
     "cheerio": "^1.1.2",
-    "@mediapipe/tasks-vision": "^0.10.22-rc.20250304",
     "dotenv": "^17.2.3",
     "lucide-react": "^0.548.0",
     "radix-ui": "^1.4.3",
