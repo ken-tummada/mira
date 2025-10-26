@@ -139,17 +139,17 @@ export const NewsProvider = ({ children }: { children: React.ReactNode }) => {
   const load = async () => {
     setLoading(true);
     setError(null);
-    try {
-      const items = await fetchSectionHeadlines();
-      setHeadlines(items);
-      console.log("[News] Loaded sections:", items);
-    } catch (e: any) {
-      console.error("[News] Error:", e);
-      setError(e?.message || "Failed to load news");
-      setHeadlines([]);
-    } finally {
+
+    for(let i = 0; i < 3 && headlines.length === 0; i++) {
+      try {
+        const items = await fetchSectionHeadlines();
+        setHeadlines(items);
+      } catch (e: any) {
+        setError(e?.message || "Failed to load news");
+        setHeadlines([]);
+      }
       setLoading(false);
-    }
+  }
   };
 
   useEffect(() => {

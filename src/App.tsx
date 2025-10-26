@@ -139,12 +139,9 @@ export default function App() {
         <div
           className={`transition-opacity duration-300 ${mirror ? "opacity-0 pointer-events-none" : "opacity-100"}`}
         >
-          {!mirror && <VoiceMirror />}
-
-          <div className="w-full flex justify-center" ref={clockRef}>
+          <div className="w-full flex justify-center mt-16" ref={clockRef}>
             <ClockWidget />
           </div>
-
           <div className="w-full flex flex-col items-center justify-center p-8 gap-6">
             <div className="w-full flex gap-6">
               <div className="w-1/2">
@@ -162,6 +159,11 @@ export default function App() {
               </NewsProvider>
             </div>
           </div>
+          {!mirror && (
+            <div className="absolute bottom-12 left-1/2 -translate-x-1/2">
+              <VoiceMirror />
+            </div>
+          )}
         </div>
 
         {/* Tiny badge to confirm gesture triggers */}
@@ -170,7 +172,7 @@ export default function App() {
             className="fixed top-4 right-4 z-50 px-3 py-2 rounded-lg shadow-lg"
             style={{ background: "rgba(30, 58, 138, 0.85)", color: "white" }}
           >
-            {flash === "hide" ? "🖐 Hide (open hand)" : "✊ Show (fist)"}
+            {flash === "hide" ? "Hide UI" : "Show UI"}
           </div>
         )}
       </div>
