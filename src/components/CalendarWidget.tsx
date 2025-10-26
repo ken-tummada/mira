@@ -69,7 +69,7 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = ({
 
       {upcomingEvents.length > 0 ? (
         <div className="space-y-3">
-          {upcomingEvents.slice(0, 2).map((event, index) => {
+          {upcomingEvents.slice(0, 2).map((event, _) => {
             const daysUntil = getDaysUntil(event.date);
 
             return (

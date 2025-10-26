@@ -2,7 +2,7 @@ import React from "react";
 import { useNews } from "../providers/NewsProvider";
 
 export const NewsWidget: React.FC = () => {
-  const { headlines, loading, error, refresh } = useNews();
+  const { headlines, loading, error } = useNews();
 
   return (
     <div className="glass-panel p-5">
