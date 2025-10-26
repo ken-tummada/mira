@@ -145,8 +145,8 @@ export default function App() {
             <ClockWidget />
           </div>
 
-          <div className="flex flex-col items-center justify-center p-8 gap-6">
-            <div className="flex gap-6">
+          <div className="w-full flex flex-col items-center justify-center p-8 gap-6">
+            <div className="w-full flex gap-6">
               <div className="w-1/2">
               <WeatherInfoProvider>
                 <WeatherWidget />
